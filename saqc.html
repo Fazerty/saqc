@@ -156,10 +156,10 @@
                     <button id='decScale' onclick="decScale()">-</button>
                 </div>
             </div>
-           <div class="menuElt" style="display:none;">
-                <div class="label"><b id="clearPointsLabel">clear Points</b></div>
+	   <br>
+           <div class="menuElt">
                 <div class="plusButton">
-                    <button id='incScale' onclick="clearPoints()">-</button>
+                    <button id='incScale' onclick="clearPoints()"><b id="clearPointsLabel">clear Points</b></button>
                 </div>
             </div>
         </div>
@@ -180,6 +180,7 @@
 		document.getElementById('rotationLabel').innerHTML = 'rotation (°)';
 		document.getElementById('ticknessLabel').innerHTML = 'épaisseur';
 		document.getElementById('zoomLabel').innerHTML = 'zoom';
+		document.getElementById('clearPointsLabel').innerHTML = 'Effacer les points';
 	}
         var bckgCanvas = document.getElementById('bckgCanvas');
         var bckgContext = bckgCanvas.getContext('2d');
@@ -246,21 +247,19 @@
 	var points = [];
 
 	function onMouseClick(e) {
-	   var coord = [e.clientX, e.clientY];
+	   var coord = [e.clientX, e.clientY, scale];
 	   points.push(coord);
+           context.scale(scale, scale);
            drawPoint(coord);
+           context.scale(1/ scale, 1/scale);
 	}
 
 	function drawPoint(coord){
-           //init();
-           //context.scale(scale, scale);
-	   console.log(coord[0] + ' ' + coord[1]);
 	   context.beginPath();
-           context.lineWidth = 2;
+           context.lineWidth = 8;
            context.strokeStyle = "#000000";
-           context.arc(coord[0]/scale, coord[1]/scale, 3, 0, Math.PI * 2, false);
+           context.arc(coord[0] / coord[2] , coord[1] / coord[2] , 6, 0, Math.PI * 2, false);
            context.stroke();
-	   //init();
 	}
 
 	function drawPoints(){
@@ -305,15 +304,13 @@
             context.lineWidth = lineWidth;
             context.strokeStyle = color;
 	    if (clockwise){
-            for (var j = 0; j < turns; j++) {context.beginPath();
-                
+            for (var j = 0; j < turns; j++) {context.beginPath();                
                 context.arc(originX       , originY - size, size * 1 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);
                 context.arc(originX + size, originY - size, size * 2 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
                 context.arc(originX + size, originY       , size * 3 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * tD);
 		context.arc(originX       , originY       , size * 4 + (size * j * 4), Math.PI / 2 * zD, Math.PI / 2 * nD);
 		context.stroke();
             }} else {
-
             for (var j = 0; j < turns; j++) {
 		context.beginPath();
                 context.arc(originX + size, originY       , size * 1 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);		
