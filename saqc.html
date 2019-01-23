@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Saqc</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        #canvas {
+            border: 2px solid orange;
+        }
+
+	div.explore_area {
+    		position:relative;
+    		width:1500px;
+    		height:900px;
+    		overflow:auto;
+	}
+        
+        #wrapper {
+            display: grid;
+            grid-template-columns: 70% 30%;
+            grid-gap: 1rem;
+        }
+        
+        .menuElt {
+            display: grid;
+            grid-template-columns: 25% 25% 25% 25%;
+            grid-gap: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="explore_area">
+            <canvas id='canvas' width='4000' height='4000' style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+            <canvas id='bckgCanvas' width='4000' height='4000' style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+        </div>
+        <div>
+            <h2>Menu </h2>
+	    <hr>
+            <br>
+            <div class="menuElt">
+                <div class="label"><b id="backgroundLabel">background</b></div>
+                <div>
+                    <input type="file" id="backgroundFile" onchange="setBackground()" accept="image/*"></div>
+            </div>
+            <div class="menuElt">
+                <div class="button">
+                    <button id='blue' onclick="setBlue()" style="background-color: #3333ff;">&nbsp;</button>
+                </div>
+                <div class="button">
+                    <button id='red' onclick="setRed()" style="background-color: #b30000;">&nbsp;</button>
+                </div>
+                <div class="button">
+                    <button id='black' onclick="setBlack()" style="background-color: #000000;">&nbsp;</button>
+                </div>
+                <div class="button">
+                    <button id='green' onclick="setGreen()" style="background-color: #2eb82e;">&nbsp;</button>
+                </div>
+            </div>
+            <div class="menuElt">
+                <div class="label"><b id="clockwiseLabel">clockwise (&#x1D123)</b></div>
+                <div class="clockwiseButton">
+  		   <input type="checkbox" checked="checked" onclick="clockwiseHandle(this)">
+                </div>
+            </div>
+            <div class="menuElt">
+                <div class="label"><b id="sizeLabel">size</b></div>
+                <div class="plusButton">
+                    <button id='incSize' onclick="incSize()">+</button>
+                </div>
+                <div class="value" id="size"></div>
+                <div class="minusButton">
+                    <button id='decSize' onclick="decSize()">-</button>
+                </div>
+            </div>
+            <div class="menuElt">
+                <div class="label"><b id="turnsLabel">turns</b></div>
+                <div class="plusButton">
+                    <button id='incTurns' onclick="incTurns()">+</button>
+                </div>
+                <div class="value" id="turns"></div>
+                <div class="minusButton">
+                    <button id='decTurns' onclick="decTurns()">-</button>
+                </div>
+            </div>
+            <div class="menuElt">
+                <div class="label"><b id="moveStepLabel">move step</b></div>
+                <div class="plusButton">
+                    <button id='incStep' onclick="incStep()">+</button>
+                </div>
+                <div class="value" id="step"></div>
+                <div class="minusButton">
+                    <button id='decStep' onclick="decStep()">-</button>
+                </div>
+            </div>
+            <div class="menuElt">
+                <div class="label"><b id="originXLabel">originX</b></div>
+                <div class="plusButton">
+                    <button id='incOriginX' onclick="incOriginX()">+</button>
+                </div>
+                <div class="value" id="originX"></div>
+                <div class="minusButton">
+                    <button id='decOriginX' onclick="decOriginX()">-</button>
+                </div>
+            </div>
+            <div class="menuElt">
+                <div class="label"><b id="originYLabel">originY</b></div>
+                <div class="plusButton">
+                    <button id='incOriginY' onclick="incOriginY()">+</button>
+                </div>
+                <div class="value" id="originY"></div>
+                <div class="minusButton">
+                    <button id='decOriginY' onclick="decOriginY()">-</button>
+                </div>
+            </div>
+            <div class="menuElt">
+                <div class="label"><b id="rotationLabel">rotation (°)</b></div>
+                <div class="plusButton">
+                    <button id='incRot' onclick="incRot()">+</button>
+                </div>
+                <div class="value" id="rot"></div>
+                <div class="minusButton">
+                    <button id='decRot' onclick="decRot()">-</button>
+                </div>
+            </div>
+            <div class="menuElt">
+                <div class="label"><b id="ticknessLabel">tickness</b></div>
+                <div class="plusButton">
+                    <button id='incLineWidth' onclick="incLineWidth()">+</button>
+                </div>
+                <div class="value" id="lineWidth"></div>
+                <div class="minusButton">
+                    <button id='decLineWidth' onclick="decLineWidth()">-</button>
+                </div>
+            </div>
+            <div class="menuElt">
+                <div class="label"><b id="zoomLabel">zoom</b></div>
+                <div class="plusButton">
+                    <button id='incScale' onclick="incScale()">+</button>
+                </div>
+                <div class="value" id="scale"></div>
+                <div class="minusButton">
+                    <button id='decScale' onclick="decScale()">-</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+	
+	var userLang = navigator.language || navigator.userLanguage; 
+
+	if (userLang.search('en') === 0){
+		document.getElementById('backgroundLabel').innerHTML = 'fond'
+		document.getElementById('clockwiseLabel').innerHTML = 'horlogique (&#x1D123)';
+		document.getElementById('sizeLabel').innerHTML = 'taille';
+		document.getElementById('turnsLabel').innerHTML = 'tours';
+		document.getElementById('moveStepLabel').innerHTML = 'taille du déplacement';
+		document.getElementById('originXLabel').innerHTML = 'origine X';
+		document.getElementById('originYLabel').innerHTML = 'origine Y';
+		document.getElementById('rotationLabel').innerHTML = 'rotation (°)';
+		document.getElementById('ticknessLabel').innerHTML = 'épaisseur';
+		document.getElementById('zoomLabel').innerHTML = 'zoom';
+	}
+        var bckgCanvas = document.getElementById('bckgCanvas');
+        var bckgContext = bckgCanvas.getContext('2d');
+        var bckgCanvasWidth = bckgCanvas.width;
+        var bckgCanvasHeight = bckgCanvas.height;
+
+        var background = new Image();
+        background.onload = function() {
+            resetBackground();
+        }
+
+        function clearBackground() {
+	    bckgContext.setTransform(1, 0, 0, 1, 0, 0);
+            bckgContext.clearRect(0, 0, bckgCanvasWidth, bckgCanvasHeight);
+        }
+
+        function setBackground() {
+            var input = document.getElementById('backgroundFile');
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    background.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+	
+
+        function resetBackground() {          
+            clearBackground();
+            bckgContext.scale(scale, scale);
+            bckgContext.drawImage(background, 0, 0);
+        }
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+        var canvasWidth = canvas.width;
+        var canvasHeight = canvas.height;
+
+        var size = 160; // the size (width of heigth) of the square made by the spiral centers  
+        var turns = 5; // number of spiral turns
+        var step = 1;
+        var originX = 3711; // x position of the spiral origin
+        var originY = 300; // y position of the spiral origin 
+        var rot = 0; // rotation angle in degrees
+        var scale = 0.25; // the scale of the image
+        var lineWidth = 6; // the tickness of the spiral
+	var color = '#000000';
+	var x= 0;
+	var y = 0;
+
+        var zD = 0 / 90;
+        var nD = 90 / 90;
+        var cD = 180 / 90;
+        var dD = 270 / 90;
+        var tD = 360 / 90;
+	var clockwise = true;
+
+        function rotate() {
+            context.translate(originX, originY);
+            context.rotate(Math.PI / 2 * rot / 90);
+            context.translate(-originX, -originY);
+        }
+
+	function clockwiseHandle(elt){
+		clockwise = elt.checked;
+		redraw();
+	}
+
+        function drawCenters() {
+            context.strokeStyle = color;
+            context.beginPath();
+            context.arc(originX, originY, 1, 0, 2 * Math.PI, true);
+            context.stroke();
+            context.beginPath();
+            context.arc(originX, originY - size, 1, 0, 2 * Math.PI, true);
+            context.stroke();
+            context.beginPath();
+            context.arc(originX + size, originY - size, 1, 0, 2 * Math.PI, true);
+            context.stroke();
+            context.beginPath();
+            context.arc(originX + size, originY, 1, 0, 2 * Math.PI, true);
+            context.stroke();
+            context.beginPath();
+        }
+
+        function drawSpiral() {
+		
+            context.beginPath();
+            context.lineWidth = lineWidth;
+            context.strokeStyle = color;
+	    if (clockwise){
+            for (var j = 0; j < turns; j++) {context.beginPath();
+                context.arc(originX       , originY       , size * 1 + (size * j * 4), Math.PI / 2 * zD, Math.PI / 2 * nD);
+                context.arc(originX       , originY - size, size * 2 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);
+                context.arc(originX + size, originY - size, size * 3 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
+                context.arc(originX + size, originY       , size * 4 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * tD);
+		context.stroke();
+            }} else {
+
+            for (var j = 0; j < turns; j++) {context.beginPath();
+                context.arc(originX       , originY       , size * 1 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
+		context.stroke();
+		context.beginPath();
+                context.arc(originX + size, originY       , size * 2 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);		
+		context.stroke();
+		context.beginPath();
+                context.arc(originX + size, originY - size, size * 3 + (size * j * 4), Math.PI / 2 * zD, Math.PI / 2 * nD);
+		context.stroke();
+		context.beginPath();
+                context.arc(originX       , originY - size, size * 4 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * zD);
+		context.stroke();
+                }
+	    }
+            context.stroke();
+        }
+
+        function init() {
+            context.setTransform(1, 0, 0, 1, 0, 0);
+        }
+
+        function clear() {
+            context.clearRect(0, 0, canvasWidth, canvasHeight);
+        }
+
+        function redraw() {
+            init();
+            clear();
+            context.scale(scale, scale);
+            rotate();
+            drawCenters();
+            drawSpiral();
+            init();
+        }
+        redraw();
+        setBackground();
+
+
+        document.getElementById('size').innerHTML = size;
+        document.getElementById('turns').innerHTML = turns;
+        document.getElementById('originX').innerHTML = originX;
+        document.getElementById('originY').innerHTML = originY;
+        document.getElementById('rot').innerHTML = rot;
+        document.getElementById('scale').innerHTML = scale;
+        document.getElementById('step').innerHTML = step;
+        document.getElementById('lineWidth').innerHTML = lineWidth;
+
+	function setColor(newColor){
+	    color = newColor;
+            redraw();
+	}
+
+	function setBlue(){
+	    setColor('#3333ff');
+	}
+	function setRed(){
+	    setColor('#b30000');
+	}
+	function setBlack(){
+	    setColor('#000000');
+	}
+	function setGreen(){
+	    setColor('#2eb82e');
+	}
+	
+        function incSize() {
+            size++;
+            redraw();
+            document.getElementById('size').innerHTML = size;
+        }
+
+        function decSize() {
+            if (size > 1) {
+                size--;
+                redraw();
+                document.getElementById('size').innerHTML = size;
+            }
+        }
+	
+	function clearIntervalAndTimeout(){
+		var interval_id = window.setInterval("", 9999); 
+		for (var i = 1; i < interval_id; i++)
+        		window.clearInterval(i);
+		var timeout_id = window.setTimeout("", 9999); 
+		for (var i = 1; i < timeout_id; i++)
+        		window.clearTimeout(i);
+	}
+
+
+        document.getElementById('incSize').addEventListener("mousedown", function() {
+            setTimeout(function() {setInterval(incSize, 100)}, 1000)
+        });
+        document.getElementById('incSize').addEventListener("mouseup", function() {
+            clearIntervalAndTimeout();
+        });
+
+        document.getElementById('decSize').addEventListener("mousedown", function() {
+            setTimeout(function() {setInterval(decSize, 100)}, 1000)
+        });
+        document.getElementById('decSize').addEventListener("mouseup", function() {
+            clearIntervalAndTimeout();
+        });
+
+        function incTurns() {
+            turns++;
+            redraw();
+            document.getElementById('turns').innerHTML = turns;
+        }
+
+        function decTurns() {
+            if (turns > 1) {
+                turns--;
+                redraw();
+                document.getElementById('turns').innerHTML = turns;
+            }
+        }
+
+        function incStep() {
+            step++;
+            redraw();
+            document.getElementById('step').innerHTML = step;
+        }
+
+        function decStep() {
+            if (step > 1) {
+                step--;
+                redraw();
+                document.getElementById('step').innerHTML = step;
+            }
+        }
+
+        function incOriginX() {
+            originX = originX + step;
+            redraw();
+            document.getElementById('originX').innerHTML = originX;
+        }
+
+        function decOriginX() {
+            originX = originX - step;
+            redraw();
+            document.getElementById('originX').innerHTML = originX;
+        }
+
+        document.getElementById('incOriginX').addEventListener("mousedown",
+            function() {setTimeout(function() {setInterval(incOriginX, 100)
+                }, 1000)
+            });
+        document.getElementById('incOriginX').addEventListener("mouseup", function() {
+            clearIntervalAndTimeout();
+        });
+        document.getElementById('decOriginX').addEventListener("mousedown", function() {
+            setTimeout(function() {setInterval(decOriginX, 100)
+            }, 1000)
+        });
+        document.getElementById('decOriginX').addEventListener("mouseup", function() {
+            clearIntervalAndTimeout();
+        });
+
+        function incOriginY() {
+            originY = originY + step;
+            redraw();
+            document.getElementById('originY').innerHTML = originY;
+        }
+
+        function decOriginY() {
+            originY = originY - step;
+            redraw();
+            document.getElementById('originY').innerHTML = originY;
+        }
+
+        document.getElementById('incOriginY').addEventListener("mousedown", function() {
+            setTimeout(function() {setInterval(incOriginY, 100)
+            }, 1000)
+        });
+        document.getElementById('incOriginY').addEventListener("mouseup", function() {
+            clearIntervalAndTimeout();
+        });
+        document.getElementById('decOriginY').addEventListener("mousedown", function() {
+            setTimeout(function() {setInterval(decOriginY, 100)
+            }, 1000)
+        });
+        document.getElementById('decOriginY').addEventListener("mouseup", function() {
+            clearIntervalAndTimeout();
+        });
+
+        function incRot() {
+            rot++;
+            redraw();
+            document.getElementById('rot').innerHTML = rot;
+        }
+
+        function decRot() {
+            rot--;
+            redraw();
+            document.getElementById('rot').innerHTML = rot;
+        }
+
+        let intervalIncRotID;
+        let timeoutIncRotID;
+        document.getElementById('incRot').addEventListener("mousedown", function() {
+            timeoutIncRotID = setTimeout(function() {
+                intervalIncRotID = setInterval(incRot, 100)
+            }, 1000)
+        });
+        document.getElementById('incRot').addEventListener("mouseup", function() {
+            clearIntervalAndTimeout();
+        });
+        let intervalDecRotID;
+        let timeoutDecRotID;
+        document.getElementById('decRot').addEventListener("mousedown", function() {
+            timeoutDecRotID = setTimeout(function() {
+                intervalDecRotID = setInterval(decRot, 100)
+            }, 1000)
+        });
+        document.getElementById('decRot').addEventListener("mouseup", function() {
+            clearIntervalAndTimeout();
+        });
+
+        function incScale() {
+            scale = scale * 2;
+            redraw();
+            resetBackground();
+            document.getElementById('scale').innerHTML = scale;
+        }
+
+        function decScale() {
+            scale = scale / 2;
+            redraw();
+            resetBackground();
+            document.getElementById('scale').innerHTML = scale;
+        }
+
+        function incLineWidth() {
+            lineWidth++;
+            redraw();
+            document.getElementById('lineWidth').innerHTML = lineWidth;
+        }
+
+        function decLineWidth() {
+            if (lineWidth > 1) {
+                lineWidth--;
+                redraw();
+                document.getElementById('lineWidth').innerHTML = lineWidth;
+            }
+
+
+        }
+    </script>
+</body>
+
+</html>
