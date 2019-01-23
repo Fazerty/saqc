@@ -23,7 +23,7 @@
         
         #wrapper {
             display: grid;
-            grid-template-columns: 70% 30%;
+            grid-template-columns: 70% 20%;
             grid-gap: 1rem;
         }
         
@@ -38,7 +38,7 @@
 <body>
     <div id="wrapper">
         <div class="explore_area">
-            <canvas id='canvas' width='4000' height='4000' style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+            <canvas id='canvas' width='4000' height='4000' style="position: absolute; left: 0; top: 0; z-index: 1;" onclick="drawPoint"></canvas>
             <canvas id='bckgCanvas' width='4000' height='4000' style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
         </div>
         <div>
@@ -47,9 +47,14 @@
             <br>
             <div class="menuElt">
                 <div class="label"><b id="backgroundLabel">background</b></div>
+		<div>
+		    <input type="checkbox" checked='checked' onchange="showBckGround(this)"/>	
+		</div>
                 <div>
-                    <input type="file" id="backgroundFile" onchange="setBackground()" accept="image/*"></div>
+                    <input type="file" id="backgroundFile" onchange="setBackground()" accept="image/*">
+		</div>
             </div>
+            <br>
             <div class="menuElt">
                 <div class="button">
                     <button id='blue' onclick="setBlue()" style="background-color: #3333ff;">&nbsp;</button>
@@ -64,6 +69,7 @@
                     <button id='green' onclick="setGreen()" style="background-color: #2eb82e;">&nbsp;</button>
                 </div>
             </div>
+	    <br>
             <div class="menuElt">
                 <div class="label"><b id="clockwiseLabel">clockwise (&#x1D123)</b></div>
                 <div class="clockwiseButton">
@@ -150,6 +156,12 @@
                     <button id='decScale' onclick="decScale()">-</button>
                 </div>
             </div>
+           <div class="menuElt" style="display:none;">
+                <div class="label"><b id="clearPointsLabel">clear Points</b></div>
+                <div class="plusButton">
+                    <button id='incScale' onclick="clearPoints()">-</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -195,7 +207,9 @@
             }
         }
 
-	
+	function showBckGround(elt){
+		document.getElementById('bckgCanvas').style.display = elt.checked? 'block' : 'none';
+	}
 
         function resetBackground() {          
             clearBackground();
@@ -207,12 +221,12 @@
         var canvasWidth = canvas.width;
         var canvasHeight = canvas.height;
 
-        var size = 160; // the size (width of heigth) of the square made by the spiral centers  
+        var size = 153; // the size (width of heigth) of the square made by the spiral centers  
         var turns = 5; // number of spiral turns
         var step = 1;
-        var originX = 3711; // x position of the spiral origin
-        var originY = 300; // y position of the spiral origin 
-        var rot = 0; // rotation angle in degrees
+        var originX = 3800; // x position of the spiral origin
+        var originY = 420; // y position of the spiral origin 
+        var rot = 300; // rotation angle in degrees
         var scale = 0.25; // the scale of the image
         var lineWidth = 6; // the tickness of the spiral
 	var color = '#000000';
@@ -226,6 +240,36 @@
         var tD = 360 / 90;
 	var clockwise = true;
 
+
+	canvas.addEventListener("click", onMouseClick, false);
+
+	var points = [];
+
+	function onMouseClick(e) {
+	   var coord = [e.clientX, e.clientY];
+	   points.push(coord);
+           drawPoint(coord);
+	}
+
+	function drawPoint(coord){
+           //init();
+           //context.scale(scale, scale);
+	   console.log(coord[0] + ' ' + coord[1]);
+	   context.beginPath();
+           context.lineWidth = 2;
+           context.strokeStyle = "#000000";
+           context.arc(coord[0]/scale, coord[1]/scale, 3, 0, Math.PI * 2, false);
+           context.stroke();
+	   //init();
+	}
+
+	function drawPoints(){
+	    for (var i = 0; i < points.length ; i++){
+		drawPoint(points[i]);
+	    }
+	}
+
+
         function rotate() {
             context.translate(originX, originY);
             context.rotate(Math.PI / 2 * rot / 90);
@@ -238,24 +282,25 @@
 	}
 
         function drawCenters() {
+            context.lineWidth = 8;
             context.strokeStyle = color;
             context.beginPath();
-            context.arc(originX, originY, 1, 0, 2 * Math.PI, true);
+            context.arc(originX, originY, 3, 0, 2 * Math.PI, true);
             context.stroke();
             context.beginPath();
-            context.arc(originX, originY - size, 1, 0, 2 * Math.PI, true);
+            context.arc(originX, originY - size, 3, 0, 2 * Math.PI, true);
             context.stroke();
             context.beginPath();
-            context.arc(originX + size, originY - size, 1, 0, 2 * Math.PI, true);
+            context.arc(originX + size, originY - size, 3, 0, 2 * Math.PI, true);
             context.stroke();
             context.beginPath();
-            context.arc(originX + size, originY, 1, 0, 2 * Math.PI, true);
+            context.arc(originX + size, originY, 3, 0, 2 * Math.PI, true);
             context.stroke();
             context.beginPath();
+            context.lineWidth = lineWidth;
         }
 
-        function drawSpiral() {
-		
+        function drawSpiral() {		
             context.beginPath();
             context.lineWidth = lineWidth;
             context.strokeStyle = color;
@@ -279,7 +324,7 @@
 		context.beginPath();
                 context.arc(originX       , originY - size, size * 3 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * zD);
 		context.stroke();
-context.beginPath();
+		context.beginPath();
                 context.arc(originX       , originY       , size * 4 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
 		context.stroke();
                 }
@@ -295,15 +340,22 @@ context.beginPath();
             context.clearRect(0, 0, canvasWidth, canvasHeight);
         }
 
+	function clearPoints(){
+		points = [];
+		redraw();
+	}
+
         function redraw() {
             init();
             clear();
             context.scale(scale, scale);
+	    drawPoints();
             rotate();
             drawCenters();
             drawSpiral();
             init();
         }
+
         redraw();
         setBackground();
 
@@ -489,14 +541,14 @@ context.beginPath();
         });
 
         function incScale() {
-            scale = scale * 2;
+            scale = scale * 1.2;
             redraw();
             resetBackground();
             document.getElementById('scale').innerHTML = scale;
         }
 
         function decScale() {
-            scale = scale / 2;
+            scale = scale / 1.2;
             redraw();
             resetBackground();
             document.getElementById('scale').innerHTML = scale;
