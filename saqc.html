@@ -74,16 +74,16 @@
             <div class="menuElt">
 		<div></div>
                 <div class="button">
-                    <button id='blue' onclick="setBlue()" style="background-color: #3333ff;">&nbsp;</button>
+                    <button id='color1' onclick="changeColor1()" >&nbsp;</button>
                 </div>
                 <div class="button">
-                    <button id='red' onclick="setRed()" style="background-color: #b30000;">&nbsp;</button>
+                    <button id='color2' onclick="changeColor2()" >&nbsp;</button>
                 </div>
                 <div class="button">
-                    <button id='black' onclick="setBlack()" style="background-color: #000000;">&nbsp;</button>
+                    <button id='color3' onclick="changeColor3()" >&nbsp;</button>
                 </div>
                 <div class="button">
-                    <button id='green' onclick="setGreen()" style="background-color: #2eb82e;">&nbsp;</button>
+                    <button id='color4' onclick="changeColor4()" >&nbsp;</button>
                 </div>
             </div>
 	    <br>
@@ -248,7 +248,11 @@
         var rot = 300; // rotation angle in degrees
         var scale = 0.25; // the scale of the image
         var lineWidth = 6; // the tickness of the spiral
-	var color = '#000000';
+	var colors = ['#000000', '#3333ff', '#b30000', '#2eb82e'];
+	var color1 = 0;
+	var color2 = 1;
+	var color3 = 2;
+	var color4 = 3;
 	var x= 0;
 	var y = 0;
 
@@ -317,7 +321,7 @@
 
         function drawCenters() {
             context.lineWidth = 8;
-            context.strokeStyle = color;
+            context.strokeStyle = colors[color1];
             context.beginPath();
             context.arc(originX, originY, 3, 0, 2 * Math.PI, true);
             context.stroke();
@@ -337,26 +341,40 @@
         function drawSpiral() {		
             context.beginPath();
             context.lineWidth = lineWidth;
-            context.strokeStyle = color;
 	    if (clockwise){
-            for (var j = 0; j < turns; j++) {context.beginPath();                
+            for (var j = 0; j < turns; j++) {
+		context.beginPath();  
+                context.strokeStyle = colors[color1];              
                 context.arc(originX       , originY - size, size * 1 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);
+		context.stroke();
+		context.beginPath();
+            	context.strokeStyle = colors[color2];
                 context.arc(originX + size, originY - size, size * 2 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
+		context.stroke();
+		context.beginPath();
+                context.strokeStyle = colors[color3]; 
                 context.arc(originX + size, originY       , size * 3 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * tD);
+		context.stroke();
+		context.beginPath();
+		context.strokeStyle = colors[color4];
 		context.arc(originX       , originY       , size * 4 + (size * j * 4), Math.PI / 2 * zD, Math.PI / 2 * nD);
 		context.stroke();
             }} else {
             for (var j = 0; j < turns; j++) {
 		context.beginPath();
+                context.strokeStyle = colors[color1]; 
                 context.arc(originX + size, originY       , size * 1 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);		
 		context.stroke();
 		context.beginPath();
+                context.strokeStyle = colors[color2]; 
                 context.arc(originX + size, originY - size, size * 2 + (size * j * 4), Math.PI / 2 * zD, Math.PI / 2 * nD);
 		context.stroke();
 		context.beginPath();
+                context.strokeStyle = colors[color3]; 
                 context.arc(originX       , originY - size, size * 3 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * zD);
 		context.stroke();
 		context.beginPath();
+                context.strokeStyle = colors[color4]; 
                 context.arc(originX       , originY       , size * 4 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
 		context.stroke();
                 }
@@ -400,23 +418,31 @@
         document.getElementById('scale').value = scale;
         document.getElementById('step').value = step;
         document.getElementById('lineWidth').value = lineWidth;
+	document.getElementById('color1').style.backgroundColor = colors[color1];
+	document.getElementById('color2').style.backgroundColor = colors[color2];
+	document.getElementById('color3').style.backgroundColor = colors[color3];
+	document.getElementById('color4').style.backgroundColor = colors[color4];
 
-	function setColor(newColor){
-	    color = newColor;
+	function changeColor1(){
+	    color1 = (color1 + 1) % colors.length;
+	    document.getElementById('color1').style.backgroundColor = colors[color1];
             redraw();
 	}
 
-	function setBlue(){
-	    setColor('#3333ff');
-	}
-	function setRed(){
-	    setColor('#b30000');
-	}
-	function setBlack(){
-	    setColor('#000000');
-	}
-	function setGreen(){
-	    setColor('#2eb82e');
+	function changeColor2(){
+	    color2 = (color2 + 1) % colors.length;
+	    document.getElementById('color2').style.backgroundColor = colors[color2];
+            redraw();
+	}	
+	function changeColor3(){
+	    color3 = (color3 + 1) % colors.length;
+	    document.getElementById('color3').style.backgroundColor = colors[color3];
+            redraw();
+	}	
+	function changeColor4(){
+	    color4 = (color4 + 1) % colors.length;
+	    document.getElementById('color4').style.backgroundColor = colors[color4];
+            redraw();
 	}
 	
         function incSize() {
