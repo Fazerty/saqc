@@ -261,24 +261,26 @@
             context.strokeStyle = color;
 	    if (clockwise){
             for (var j = 0; j < turns; j++) {context.beginPath();
-                context.arc(originX       , originY       , size * 1 + (size * j * 4), Math.PI / 2 * zD, Math.PI / 2 * nD);
-                context.arc(originX       , originY - size, size * 2 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);
-                context.arc(originX + size, originY - size, size * 3 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
-                context.arc(originX + size, originY       , size * 4 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * tD);
+                
+                context.arc(originX       , originY - size, size * 1 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);
+                context.arc(originX + size, originY - size, size * 2 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
+                context.arc(originX + size, originY       , size * 3 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * tD);
+		context.arc(originX       , originY       , size * 4 + (size * j * 4), Math.PI / 2 * zD, Math.PI / 2 * nD);
 		context.stroke();
             }} else {
 
-            for (var j = 0; j < turns; j++) {context.beginPath();
-                context.arc(originX       , originY       , size * 1 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
+            for (var j = 0; j < turns; j++) {
+		context.beginPath();
+                context.arc(originX + size, originY       , size * 1 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);		
 		context.stroke();
 		context.beginPath();
-                context.arc(originX + size, originY       , size * 2 + (size * j * 4), Math.PI / 2 * nD, Math.PI / 2 * cD);		
+                context.arc(originX + size, originY - size, size * 2 + (size * j * 4), Math.PI / 2 * zD, Math.PI / 2 * nD);
 		context.stroke();
 		context.beginPath();
-                context.arc(originX + size, originY - size, size * 3 + (size * j * 4), Math.PI / 2 * zD, Math.PI / 2 * nD);
+                context.arc(originX       , originY - size, size * 3 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * zD);
 		context.stroke();
-		context.beginPath();
-                context.arc(originX       , originY - size, size * 4 + (size * j * 4), Math.PI / 2 * dD, Math.PI / 2 * zD);
+context.beginPath();
+                context.arc(originX       , originY       , size * 4 + (size * j * 4), Math.PI / 2 * cD, Math.PI / 2 * dD);
 		context.stroke();
                 }
 	    }
