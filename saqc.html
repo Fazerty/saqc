@@ -563,8 +563,9 @@
             clearIntervalAndTimeout();
         });
 
-        function incRot() {
-            rot++;
+        function incRot(val) {
+	    if (val){rot = rot + val} else 	
+            {rot++;}
 	    if (rot === 360){ rot = 0};	
             redraw();
             document.getElementById('rot').value = rot;
@@ -575,13 +576,10 @@
             redraw();
 	}
 
-	function updateRot(){
-            rot = Number(document.getElementById('rot').value);	
-            redraw();
-	}
 
-        function decRot() {
-            rot--;
+        function decRot(val) {
+	    if (val){rot = rot - val} else 	
+              {rot--;}
 	    if (rot === -1){ rot = 359}	
             redraw();
             document.getElementById('rot').value = rot;
@@ -591,7 +589,7 @@
         let timeoutIncRotID;
         document.getElementById('incRot').addEventListener("mousedown", function() {
             timeoutIncRotID = setTimeout(function() {
-                intervalIncRotID = setInterval(incRot, 100)
+                intervalIncRotID = setInterval(function() { incRot(3); }, 100)
             }, 1000)
         });
         document.getElementById('incRot').addEventListener("mouseup", function() {
@@ -601,7 +599,7 @@
         let timeoutDecRotID;
         document.getElementById('decRot').addEventListener("mousedown", function() {
             timeoutDecRotID = setTimeout(function() {
-                intervalDecRotID = setInterval(decRot, 100)
+                intervalDecRotID = setInterval(function() { decRot(3); }, 100)
             }, 1000)
         });
         document.getElementById('decRot').addEventListener("mouseup", function() {
