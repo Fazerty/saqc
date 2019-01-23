@@ -261,11 +261,22 @@
 
 
 	canvas.addEventListener("click", onMouseClick, false);
+    	canvas.addEventListener("mousewheel", MouseWheelHandler, false);
+    	canvas.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
+
+
+	function MouseWheelHandler(e) {
+		e.preventDefault();
+    		var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+     	 	if (delta === 1){ incScale();} else {decScale();}
+		}
 
 	var points = [];
 
 	function onMouseClick(e) {
-	   var coord = [e.clientX, e.clientY, scale];
+
+	   var bounds = canvas.getBoundingClientRect();
+	   var coord = [e.clientX - bounds.left, e.clientY - bounds.top, scale];
 	   points.push(coord);
            context.scale(scale, scale);
            drawPoint(coord);
