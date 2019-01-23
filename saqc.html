@@ -16,7 +16,7 @@
 
 	div.explore_area {
     		position:relative;
-    		width:1500px;
+    		width:1800px;
     		height:900px;
     		overflow:auto;
 	}
@@ -29,9 +29,25 @@
         
         .menuElt {
             display: grid;
-            grid-template-columns: 25% 25% 25% 25%;
+            grid-template-columns: 60% 10% 10% 10% 10%;
             grid-gap: 1rem;
         }
+
+	button {
+		border-radius: 8px;
+	}
+
+	/* Hide HTML5 Up and Down arrows. */
+	input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+    	-webkit-appearance: none;
+    	margin: 0;
+	width:40px;
+	}
+ 
+	input[type="number"] {
+    	-moz-appearance: textfield;
+	width:40px;
+	}
     </style>
 </head>
 
@@ -56,6 +72,7 @@
             </div>
             <br>
             <div class="menuElt">
+		<div></div>
                 <div class="button">
                     <button id='blue' onclick="setBlue()" style="background-color: #3333ff;">&nbsp;</button>
                 </div>
@@ -81,7 +98,7 @@
                 <div class="plusButton">
                     <button id='incSize' onclick="incSize()">+</button>
                 </div>
-                <div class="value" id="size"></div>
+                <div> <input type="number" class="value" id="size" onchange="updateSize()"></div>
                 <div class="minusButton">
                     <button id='decSize' onclick="decSize()">-</button>
                 </div>
@@ -91,7 +108,7 @@
                 <div class="plusButton">
                     <button id='incTurns' onclick="incTurns()">+</button>
                 </div>
-                <div class="value" id="turns"></div>
+                <div><input type ="number" class="value" id="turns" onchange="updateTurns()"></div>
                 <div class="minusButton">
                     <button id='decTurns' onclick="decTurns()">-</button>
                 </div>
@@ -101,7 +118,7 @@
                 <div class="plusButton">
                     <button id='incStep' onclick="incStep()">+</button>
                 </div>
-                <div class="value" id="step"></div>
+                <div><input type="number" class="value" id="step" onchange="updateStep()"></div>
                 <div class="minusButton">
                     <button id='decStep' onclick="decStep()">-</button>
                 </div>
@@ -111,7 +128,7 @@
                 <div class="plusButton">
                     <button id='incOriginX' onclick="incOriginX()">+</button>
                 </div>
-                <div class="value" id="originX"></div>
+                <div><input type="number" class="value" id="originX" onchange="updateOriginX()"></div>
                 <div class="minusButton">
                     <button id='decOriginX' onclick="decOriginX()">-</button>
                 </div>
@@ -121,7 +138,7 @@
                 <div class="plusButton">
                     <button id='incOriginY' onclick="incOriginY()">+</button>
                 </div>
-                <div class="value" id="originY"></div>
+                <div> <input type="number" class="value" id="originY" onchange="updateOriginY()"></div>
                 <div class="minusButton">
                     <button id='decOriginY' onclick="decOriginY()">-</button>
                 </div>
@@ -131,7 +148,7 @@
                 <div class="plusButton">
                     <button id='incRot' onclick="incRot()">+</button>
                 </div>
-                <div class="value" id="rot"></div>
+                <div><input type='number' class="value" id="rot" onchange="updateRot()"></div>
                 <div class="minusButton">
                     <button id='decRot' onclick="decRot()">-</button>
                 </div>
@@ -141,7 +158,7 @@
                 <div class="plusButton">
                     <button id='incLineWidth' onclick="incLineWidth()">+</button>
                 </div>
-                <div class="value" id="lineWidth"></div>
+                <div><input type="number" class="value" id="lineWidth" onchange="updateLineWidth()"></div>
                 <div class="minusButton">
                     <button id='decLineWidth' onclick="decLineWidth()">-</button>
                 </div>
@@ -151,7 +168,7 @@
                 <div class="plusButton">
                     <button id='incScale' onclick="incScale()">+</button>
                 </div>
-                <div class="value" id="scale"></div>
+                <div><input type="number" class="value" id="scale" onchange="updateScale()"></div>
                 <div class="minusButton">
                     <button id='decScale' onclick="decScale()">-</button>
                 </div>
@@ -162,11 +179,12 @@
                     <button id='incScale' onclick="clearPoints()"><b id="clearPointsLabel">clear Points</b></button>
                 </div>
             </div>
+	   <div id="points"></div>
         </div>
     </div>
 
-    <script>
-	
+    <script>		
+
 	var userLang = navigator.language || navigator.userLanguage; 
 
 	if (userLang.search('fr') === 0){
@@ -253,6 +271,12 @@
            drawPoint(coord);
            context.scale(1/ scale, 1/scale);
 	}
+
+	function getDistanceOrigine(coord){
+ 	   var xDif = originX - (coord[0] / coord[2]);
+ 	   var yDif = originY - (coord[1] / coord[2]);
+	   return Math.sqrt((xDif * xDif) + (yDif * yDif));
+	};
 
 	function drawPoint(coord){
 	   context.beginPath();
@@ -357,14 +381,14 @@
         setBackground();
 
 
-        document.getElementById('size').innerHTML = size;
-        document.getElementById('turns').innerHTML = turns;
-        document.getElementById('originX').innerHTML = originX;
-        document.getElementById('originY').innerHTML = originY;
-        document.getElementById('rot').innerHTML = rot;
-        document.getElementById('scale').innerHTML = scale;
-        document.getElementById('step').innerHTML = step;
-        document.getElementById('lineWidth').innerHTML = lineWidth;
+        document.getElementById('size').value = size;
+        document.getElementById('turns').value = turns;
+        document.getElementById('originX').value = originX;
+        document.getElementById('originY').value = originY;
+        document.getElementById('rot').value = rot;
+        document.getElementById('scale').value = scale;
+        document.getElementById('step').value = step;
+        document.getElementById('lineWidth').value = lineWidth;
 
 	function setColor(newColor){
 	    color = newColor;
@@ -387,14 +411,19 @@
         function incSize() {
             size++;
             redraw();
-            document.getElementById('size').innerHTML = size;
-        }
+            document.getElementById('size').value = size;
+        }	
+
+	function updateSize(){
+	    size = Number(document.getElementById('size').value);
+            redraw();
+	}
 
         function decSize() {
             if (size > 1) {
                 size--;
                 redraw();
-                document.getElementById('size').innerHTML = size;
+                document.getElementById('size').value = size;
             }
         }
 	
@@ -425,41 +454,55 @@
         function incTurns() {
             turns++;
             redraw();
-            document.getElementById('turns').innerHTML = turns;
+            document.getElementById('turns').value = turns;
         }
+
+	function updateTurns(){
+	    turns = Number(document.getElementById('turns').value);
+            redraw();
+	}
 
         function decTurns() {
             if (turns > 1) {
                 turns--;
                 redraw();
-                document.getElementById('turns').innerHTML = turns;
+                document.getElementById('turns').value = turns;
             }
         }
 
         function incStep() {
             step++;
             redraw();
-            document.getElementById('step').innerHTML = step;
+            document.getElementById('step').value = step;
         }
 
+	function updateStep(){
+	    step = Number(document.getElementById('step').value);
+            redraw();
+	}
         function decStep() {
             if (step > 1) {
                 step--;
                 redraw();
-                document.getElementById('step').innerHTML = step;
+                document.getElementById('step').value = step;
             }
         }
 
         function incOriginX() {
             originX = originX + step;
             redraw();
-            document.getElementById('originX').innerHTML = originX;
+            document.getElementById('originX').value = originX;
+        }
+
+        function updateOriginX() {
+            originX = Number(document.getElementById('originX').value) ;
+            redraw();
         }
 
         function decOriginX() {
             originX = originX - step;
             redraw();
-            document.getElementById('originX').innerHTML = originX;
+            document.getElementById('originX').value = originX;
         }
 
         document.getElementById('incOriginX').addEventListener("mousedown",
@@ -480,13 +523,18 @@
         function incOriginY() {
             originY = originY + step;
             redraw();
-            document.getElementById('originY').innerHTML = originY;
+            document.getElementById('originY').value = originY;
+        }
+
+        function updateOriginY() {
+            originY = Number(document.getElementById('originY').value) ;
+            redraw();
         }
 
         function decOriginY() {
             originY = originY - step;
             redraw();
-            document.getElementById('originY').innerHTML = originY;
+            document.getElementById('originY').value = originY;
         }
 
         document.getElementById('incOriginY').addEventListener("mousedown", function() {
@@ -506,16 +554,26 @@
 
         function incRot() {
             rot++;
-	    if (rot === 360){ rot = 0}	
+	    if (rot === 360){ rot = 0};	
             redraw();
-            document.getElementById('rot').innerHTML = rot;
+            document.getElementById('rot').value = rot;
         }
+
+	function updateRot(){
+	    rot = Number(document.getElementById('rot').value);
+            redraw();
+	}
+
+	function updateRot(){
+            rot = Number(document.getElementById('rot').value);	
+            redraw();
+	}
 
         function decRot() {
             rot--;
 	    if (rot === -1){ rot = 359}	
             redraw();
-            document.getElementById('rot').innerHTML = rot;
+            document.getElementById('rot').value = rot;
         }
 
         let intervalIncRotID;
@@ -543,27 +601,37 @@
             scale = scale * 1.2;
             redraw();
             resetBackground();
-            document.getElementById('scale').innerHTML = scale;
+            document.getElementById('scale').value = scale;
         }
+
+	function updateScale(){
+            scale = Number(document.getElementById('scale').value);	
+            redraw();
+	}
 
         function decScale() {
             scale = scale / 1.2;
             redraw();
             resetBackground();
-            document.getElementById('scale').innerHTML = scale;
+            document.getElementById('scale').value = scale;
         }
 
         function incLineWidth() {
             lineWidth++;
             redraw();
-            document.getElementById('lineWidth').innerHTML = lineWidth;
+            document.getElementById('lineWidth').value = lineWidth;
         }
+
+	function updateLineWidth(){
+	    lineWidth = Number(document.getElementById('lineWidth').value);
+            redraw();
+	}
 
         function decLineWidth() {
             if (lineWidth > 1) {
                 lineWidth--;
                 redraw();
-                document.getElementById('lineWidth').innerHTML = lineWidth;
+                document.getElementById('lineWidth').value = lineWidth;
             }
 
 
