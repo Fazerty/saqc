@@ -506,12 +506,14 @@
 
         function incRot() {
             rot++;
+	    if (rot === 360){ rot = 0}	
             redraw();
             document.getElementById('rot').innerHTML = rot;
         }
 
         function decRot() {
             rot--;
+	    if (rot === -1){ rot = 359}	
             redraw();
             document.getElementById('rot').innerHTML = rot;
         }
