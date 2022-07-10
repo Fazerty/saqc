@@ -8,29 +8,38 @@
         body {
             margin: 0px;
             padding: 0px;
+            height: 100vh;
         }
 
         #canvas {
             border: 2px solid orange;
+            overflow: scroll;
         }
 
-        div.explore_area {
+        .explore_area {
             position: relative;
-            width: 1800px;
-            height: 900px;
-            overflow: auto;
+            width: 100%;
+            height: 100%;
+            overflow: scroll;
+            flex: 4;
+        }
+
+        .controls {
+            flex:1;
+            margin: 20px;
+            width: auto;
         }
 
         #wrapper {
-            display: grid;
-            grid-template-columns: 70% 20%;
-            grid-gap: 1rem;
+            display: flex;
+            overflow: scroll;
+            height: 100vh;
         }
 
         .menu-elt {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-gap: 1rem;
+            grid-gap: 0.1rem;
             width: auto;
         }
 
@@ -63,23 +72,18 @@
             width: 20px;
         }
 
-        .controls {
-            margin: 20px;
-            width: auto;
-        }
 
         .blue-button {
             text-decoration: none;
             display: block;
-            width: 115px;
-            min-height: 25px;
+            width: 80px;
             background: #4E9CAF;
-            padding: 10px;
+            padding: 2px;
             text-align: center;
             border-radius: 5px;
             color: white;
             font-weight: bold;
-            line-height: 25px;
+            line-height: 20px;
             border: 3px solid blue;
         }
     </style>
@@ -92,8 +96,6 @@
                 onclick="drawPoint"></canvas>
         </div>
         <div class="controls">
-            <h2 class="menu">Menu </h2>
-
             <div class="menu-elt">
 
                 <div class="label"><b id="backgroundLabel">Background</b>
@@ -182,8 +184,9 @@
             <div class="menu-elt">
                 <button id='clearPoints' class="blue-button" onclick="clearPoints()"><b id="clearPointsLabel">Clear
                         points</b></button>
-                <p id="pointsHelp">Add points by clicking on the image</p>
+                <p id="pointsHelp" class="span3">Add points by clicking on the image</p>
             </div>
+            <hr />
 
             <div class="menu-elt">
                 <a href="#" class="blue-button" id="btn-download-image" download="spirale.png">Download image</a>
@@ -266,15 +269,7 @@
         // Handle downloads
         var downloadImageButton = document.getElementById('btn-download-image');
         downloadImageButton.addEventListener('click', function (e) {
-
-            context.webkitImageSmoothingEnabled = false;
-            context.mozImageSmoothingEnabled = false;
-            context.imageSmoothingEnabled = false;
             var dataURL = canvas.toDataURL('image/png', 1.0);
-
-            context.webkitImageSmoothingEnabled = true;
-            context.mozImageSmoothingEnabled = true;
-            context.imageSmoothingEnabled = true;
             downloadImageButton.href = dataURL;
         });
 
